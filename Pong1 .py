@@ -4,7 +4,7 @@ import random
 # Set up the screen
 wn = turtle.Screen()
 wn.title("Pong")
-wn.bgcolor("black")
+wn.bgcolor("green")  # Change the background color to green
 wn.setup(width=800, height=600)
 wn.tracer(0)
 
@@ -29,7 +29,7 @@ paddle_b.goto(350, 0)
 # Ball
 ball = turtle.Turtle()
 ball.speed(0)
-ball.shape("square")
+ball.shape("circle")  # Change the ball's shape to circle
 ball.color("white")
 ball.penup()
 ball.goto(0, 0)
@@ -77,16 +77,21 @@ def paddle_b_down():
 
 # AI control
 def ai_control():
-    if ball.dx > 0:
-        if paddle_b.ycor() < ball.ycor():
-            paddle_b_up()
-        else:
-            paddle_b_down()
+    target_y = ball.ycor()
+    current_y = paddle_b.ycor()
+    
+    # Smooth AI movement
+    if current_y < target_y:
+        new_y = current_y + 1
+    else:
+        new_y = current_y - 1
+    
+    paddle_b.sety(new_y)
 
 # Keyboard binding
 wn.listen()
-wn.onkeypress(paddle_a_up, "w")
-wn.onkeypress(paddle_a_down, "s")
+wn.onkeypress(paddle_a_up, "Up")
+wn.onkeypress(paddle_a_down, "Down")
 
 # Main game loop
 while True:
