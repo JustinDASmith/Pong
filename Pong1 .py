@@ -1,4 +1,5 @@
 import turtle
+import random
 
 # Set up the screen
 wn = turtle.Screen()
@@ -16,7 +17,7 @@ paddle_a.shapesize(stretch_wid=5, stretch_len=1)
 paddle_a.penup()
 paddle_a.goto(-350, 0)
 
-# Paddle B
+# Paddle B (AI)
 paddle_b = turtle.Turtle()
 paddle_b.speed(0)
 paddle_b.shape("square")
@@ -39,6 +40,20 @@ ball.dy = 2
 score_a = 0
 score_b = 0
 
+# Create the scoreboard
+scoreboard = turtle.Turtle()
+scoreboard.speed(0)
+scoreboard.color("white")
+scoreboard.penup()
+scoreboard.hideturtle()
+scoreboard.goto(0, 260)
+scoreboard.write("Player A: {}  Player B: {}".format(score_a, score_b), align="center", font=("Courier", 24, "normal"))
+
+# Function to update the scoreboard
+def update_scoreboard():
+    scoreboard.clear()
+    scoreboard.write("Player A: {}  Player B: {}".format(score_a, score_b), align="center", font=("Courier", 24, "normal"))
+
 # Function to move paddles
 def paddle_a_up():
     y = paddle_a.ycor()
@@ -60,12 +75,18 @@ def paddle_b_down():
     y -= 20
     paddle_b.sety(y)
 
+# AI control
+def ai_control():
+    if ball.dx > 0:
+        if paddle_b.ycor() < ball.ycor():
+            paddle_b_up()
+        else:
+            paddle_b_down()
+
 # Keyboard binding
 wn.listen()
 wn.onkeypress(paddle_a_up, "w")
 wn.onkeypress(paddle_a_down, "s")
-wn.onkeypress(paddle_b_up, "Up")
-wn.onkeypress(paddle_b_down, "Down")
 
 # Main game loop
 while True:
@@ -89,12 +110,14 @@ while True:
         ball.dx *= -1
         # Player A scores a point
         score_a += 1
+        update_scoreboard()
 
     if ball.xcor() < -390:
         ball.goto(0, 0)
         ball.dx *= -1
         # Player B scores a point
         score_b += 1
+        update_scoreboard()
         
     # Paddle and ball collisions
     if (ball.dx > 0) and (340 < ball.xcor() < 350) and (paddle_b.ycor() - 50 < ball.ycor() < paddle_b.ycor() + 50):
@@ -113,3 +136,7 @@ while True:
             # Reset scores for the next set
             score_a = 0
             score_b = 0
+            update_scoreboard()
+
+    # AI control
+    ai_control()
